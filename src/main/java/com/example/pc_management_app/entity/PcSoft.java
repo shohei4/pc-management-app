@@ -8,14 +8,22 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "pc_software",
         uniqueConstraints = @UniqueConstraint(
                 name = "uk_pc_software_pc_id_software_id",
                 columnNames = {"pc_id", "software_id"}))
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PcSoft {
 
     @Id
