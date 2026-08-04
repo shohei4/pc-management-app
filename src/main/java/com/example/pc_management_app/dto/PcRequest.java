@@ -4,7 +4,6 @@ import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,7 +25,7 @@ public class PcRequest {
 	@NotBlank(message = "利用者属性を選択してください")
 	private String UserAttr;
 	
-	private List<Long> selectedSoftwareIds;
+	private List<String> savedSoftwareNames;
 	
 	private String maker;
 	
