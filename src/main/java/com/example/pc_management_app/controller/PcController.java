@@ -3,8 +3,6 @@ package com.example.pc_management_app.controller;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.validation.Valid;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -18,6 +16,7 @@ import com.example.pc_management_app.dto.PcListItemDto;
 import com.example.pc_management_app.dto.PcRequest;
 import com.example.pc_management_app.service.PcService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -34,14 +33,14 @@ public class PcController {
 
 		model.addAttribute("groupedPcs", groupedPcs);
 
-		return "pc/list";
+		return "/pc/list";
 	}
 
 	//登録フォーム表示
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {
 		model.addAttribute("pcRequest", new PcRequest());
-		return "pc/register";
+		return "/pc/register";
 	}
 
 	//登録処理
@@ -52,7 +51,7 @@ public class PcController {
 		
 		if(bidingResult.hasErrors()) {
 			//入力エラーがあれば登録画面に遷移
-			return "pc/register";
+			return "/pc/register";
 		}
 		
 		pcService.register(request);

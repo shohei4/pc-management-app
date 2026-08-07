@@ -2,20 +2,23 @@ package com.example.pc_management_app.entity;
 
 import java.time.LocalDateTime;
 
+import org.hibernate.annotations.CreationTimestamp;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import org.hibernate.annotations.CreationTimestamp;
-
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "auth_user")
-@Data
+@Getter
+@Setter
+@Builder
 public class AuthUser {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +26,9 @@ public class AuthUser {
 	
 	@Column(nullable = false, unique = true, length = 50)
 	private String username;
+	
+	@Column(nullable = false, length = 100)
+	private String password;
 	
 	@CreationTimestamp
 	@Column(nullable = false, updatable = false)
