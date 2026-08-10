@@ -14,9 +14,11 @@ import com.example.pc_management_app.entity.PcSoft;
 public interface PcSoftRepository extends JpaRepository<PcSoft, Long> {
 	Optional<PcSoft> findByPcId(Long pcId);
 	
-	List<PcSoft> findBySoftwareId(Long id);
+	List<PcSoft> findBySoftId(Long id);
 	
 	//ソフトウェア名からpcIdを検索してリストで返す
-	@Query("SELECT ps.pc.id FROM PcSoft ps WHERE ps.software.name = :softwareName")
+	@Query("SELECT ps.pcId FROM PcSoft ps \r\n"
+			+ "JOIN Software s ON s.id = ps.softId \r\n"
+			+ "WHERE s.name = :softwareName")
 	List<Long> findPcIdsBySoftwareName(@Param("softwareName") String softwareName);
 }

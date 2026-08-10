@@ -23,8 +23,8 @@ public interface PcRepository extends JpaRepository<Pc, Long> {
 
     // ソフトで絞込
     @Query("SELECT DISTINCT p FROM Pc p " +
-           "JOIN PcSoft ps ON ps.id.pcId = p.id " +
-           "JOIN Software s ON s.id = ps.id.softId " +
+           "JOIN PcSoft ps ON ps.pcId = p.id " +
+           "JOIN Software s ON s.id = ps.softId " +
            "WHERE s.name = :softwareName")
     List<Pc> findBySoftwareName(@Param("softwareName") String softwareName);
 	
