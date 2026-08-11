@@ -33,14 +33,14 @@ public class PcController {
 
 		model.addAttribute("groupedPcs", groupedPcs);
 
-		return "/pc/list";
+		return "pc/list";
 	}
 
 	//登録フォーム表示
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {
 		model.addAttribute("pcRequest", new PcRequest());
-		return "/pc/register";
+		return "pc/register";
 	}
 
 	//登録処理
@@ -51,7 +51,7 @@ public class PcController {
 		
 		if(bidingResult.hasErrors()) {
 			//入力エラーがあれば登録画面に遷移
-			return "/pc/register";
+			return "pc/register";
 		}
 		
 		pcService.register(request);
