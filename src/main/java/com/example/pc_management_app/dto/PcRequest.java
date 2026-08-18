@@ -1,5 +1,6 @@
 package com.example.pc_management_app.dto;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
@@ -25,11 +26,13 @@ public class PcRequest {
 	@NotBlank(message = "利用者属性を選択してください")
 	private String UserAttr;
 	
-	private List<String> savedSoftwareNames;
+	@Builder.Default
+	private List<String> softwareNames = new ArrayList<>(List.of("Office"));
 	
 	private String maker;
 	
-	private String os;
+	@Builder.Default
+	private String os = "Windows11";
 	
 	private String remarks;
 }

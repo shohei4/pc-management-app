@@ -101,7 +101,7 @@ public class PcService {
 		Pc savedPc = pcRepository.save(pc);
 
 		//2. Softwareテーブルへの登録（既存流用 or 新規作成）
-		List<Long> softwareIds = request.getSavedSoftwareNames().stream()
+		List<Long> softwareIds = request.getSoftwareNames().stream()
 				.map(name -> softwareRepository.findByName(name)
 						.orElseGet(() -> softwareRepository.save( //findByNameにヒットしない場合登録を行う
 								Software.builder().name(name).build()))

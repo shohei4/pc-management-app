@@ -1,5 +1,6 @@
 package com.example.pc_management_app.controller;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -29,10 +30,12 @@ public class PcController {
 	//一覧表示
 	@GetMapping
 	public String list(Model model) {
-		Map<String, List<PcListItemDto>> groupedPcs = pcService.findAllPcForListGroupedByUserAttr();
-
-		model.addAttribute("groupedPcs", groupedPcs);
-
+		Map<String, List<PcListItemDto>> grouped = pcService.findAllPcForListGroupedByUserAttr();
+		//キーごとにモデルに追加
+		model.addAttribute("staffPcList", grouped.getOrDefault("staff", Collections.emptyList()));
+		model.addAttribute("userPcList", grouped.getOrDefault("user", Collections.emptyList()));
+		model.addAttribute("trialPcList", grouped.getOrDefault("trial", Collections.emptyList()));
+		
 		return "pc/list";
 	}
 

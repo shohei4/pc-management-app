@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>パソコン情報一覧</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css"
+		rel="stylesheet">
+	<link
+		href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap"
+		rel="stylesheet">
+	<style>
+		:root {
+			--ink: #1c2430;
+			--ink-soft: #5b6577;
+			--paper: #f3f4f7;
+			--card: #ffffff;
+			--line: #e2e5eb;
+			--navy: #233858;
+			--navy-deep: #182740;
+			--accent: #3d6b8a;
+			--ok: #2f8f5b;
+			--ok-bg: #e5f4ec;
+			--off-bg: #eef0f3;
+			--off-fg: #9aa1ad;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			background: var(--paper);
+			color: var(--ink);
+			font-family: 'Zen Kaku Gothic New', 'Hiragino Sans', sans-serif;
+			min-height: 100vh;
+		}
+
+		.mono {
+			font-family: 'JetBrains Mono', monospace;
+		}
+
+		.topbar {
+			background: var(--navy-deep);
+			color: #fff;
+			padding: .85rem 1.5rem;
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			box-shadow: 0 2px 10px rgba(24, 39, 64, .15);
+		}
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: .65rem;
+			font-weight: 700;
+			letter-spacing: .02em;
+			font-size: 1.05rem;
+		}
+
+		.brand-mark {
+			width: 30px;
+			height: 30px;
+			border-radius: 7px;
+			background: linear-gradient(135deg, #3d6b8a, #233858);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: .85rem;
+			font-weight: 900;
+		}
+
+		.topnav a {
+			color: rgba(255, 255, 255, .72);
+			text-decoration: none;
+			font-size: .86rem;
+			padding: .5rem .9rem;
+			border-radius: 6px;
+			margin-left: .15rem;
+			transition: background .15s, color .15s;
+		}
+
+		.topnav a:hover {
+			background: rgba(255, 255, 255, .1);
+			color: #fff;
+		}
+
+		.topnav a.active {
+			background: rgba(255, 255, 255, .14);
+			color: #fff;
+			font-weight: 500;
+		}
+
+		.topnav a.logout {
+			color: #f2b5a8;
+		}
+
+		.topnav a.logout:hover {
+			background: rgba(240, 120, 90, .15);
+		}
+
+		.page-wrap {
+			max-width: 1180px;
+			margin: 0 auto;
+			padding: 2rem 1.5rem 4rem;
+		}
+
+		.page-head {
+			display: flex;
+			align-items: flex-end;
+			justify-content: space-between;
+			margin-bottom: 1.4rem;
+			flex-wrap: wrap;
+			gap: 1rem;
+		}
+
+		.page-head h1 {
+			font-size: 1.5rem;
+			font-weight: 700;
+			margin: 0 0 .2rem;
+			color: var(--ink);
+		}
+
+		.page-head .sub {
+			color: var(--ink-soft);
+			font-size: .85rem;
+		}
+
+		.search-bar {
+			background: var(--card);
+			border: 1px solid var(--line);
+			border-radius: 10px;
+			padding: .55rem .7rem;
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+			min-width: 300px;
+			box-shadow: 0 1px 2px rgba(20, 30, 50, .03);
+		}
+
+		.search-bar i {
+			color: var(--ink-soft);
+		}
+
+		.search-bar input {
+			border: none;
+			outline: none;
+			flex: 1;
+			font-size: .88rem;
+			background: transparent;
+		}
+
+		.pc-section {
+			background: var(--card);
+			border: 1px solid var(--line);
+			border-radius: 12px;
+			margin-bottom: 1.6rem;
+			overflow: hidden;
+			box-shadow: 0 1px 3px rgba(20, 30, 50, .04);
+		}
+
+		.pc-section-head {
+			display: flex;
+			align-items: center;
+			gap: .7rem;
+			padding: 1rem 1.3rem;
+			border-bottom: 1px solid var(--line);
+			background: linear-gradient(180deg, #fff, #fafbfc);
+		}
+
+		.tag-dot {
+			width: 9px;
+			height: 9px;
+			border-radius: 50%;
+			flex: none;
+		}
+
+		.tag-staff {
+			background: #3d6b8a;
+		}
+
+		.tag-user {
+			background: #c98a3e;
+		}
+
+		.tag-trial {
+			background: #7a5fb0;
+		}
+
+		.pc-section-head h2 {
+			font-size: .98rem;
+			font-weight: 700;
+			margin: 0;
+			color: var(--ink);
+		}
+
+		.pc-section-head .count {
+			margin-left: .4rem;
+			font-size: .72rem;
+			color: var(--ink-soft);
+			font-family: 'JetBrains Mono', monospace;
+		}
+
+		table.pc-table {
+			width: 100%;
+			margin: 0;
+			border-collapse: collapse;
+			font-size: .86rem;
+		}
+
+		table.pc-table thead th {
+			background: #f7f8fa;
+			color: var(--ink-soft);
+			font-weight: 500;
+			font-size: .72rem;
+			letter-spacing: .03em;
+			text-transform: uppercase;
+			padding: .6rem .9rem;
+			border-bottom: 1px solid var(--line);
+			white-space: nowrap;
+		}
+
+		table.pc-table tbody td {
+			padding: .65rem .9rem;
+			border-bottom: 1px solid var(--line);
+			vertical-align: middle;
+			color: var(--ink);
+		}
+
+		table.pc-table tbody tr:last-child td {
+			border-bottom: none;
+		}
+
+		table.pc-table tbody tr:hover {
+			background: #f9fafb;
+		}
+
+		.no-cell {
+			font-family: 'JetBrains Mono', monospace;
+			color: var(--ink-soft);
+			font-size: .8rem;
+		}
+
+		.name-cell {
+			font-weight: 500;
+		}
+
+		.sw-badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 24px;
+			height: 24px;
+			border-radius: 6px;
+			font-size: .85rem;
+		}
+
+		.sw-on {
+			background: var(--ok-bg);
+			color: var(--ok);
+		}
+
+		.sw-off {
+			background: var(--off-bg);
+			color: var(--off-fg);
+		}
+
+		.env-pill {
+			display: inline-block;
+			font-size: .72rem;
+			font-family: 'JetBrains Mono', monospace;
+			background: #eef1f5;
+			color: var(--ink-soft);
+			border: 1px solid var(--line);
+			border-radius: 5px;
+			padding: .15rem .5rem;
+		}
+
+		.other-sw-pill {
+			display: inline-block;
+			font-size: .72rem;
+			background: #f1ecf8;
+			color: #6a4fa0;
+			border: 1px solid #ded3f0;
+			border-radius: 5px;
+			padding: .1rem .45rem;
+			margin: 0 .2rem .2rem 0;
+		}
+
+		.note-cell {
+			color: var(--ink-soft);
+			font-size: .82rem;
+		}
+
+		.btn-edit {
+			border: 1px solid var(--line);
+			background: #fff;
+			color: var(--accent);
+			font-size: .78rem;
+			padding: .32rem .8rem;
+			border-radius: 7px;
+			display: inline-flex;
+			align-items: center;
+			gap: .3rem;
+			transition: all .15s;
+		}
+
+		.btn-edit:hover {
+			background: var(--accent);
+			border-color: var(--accent);
+			color: #fff;
+		}
+
+		.empty-row td {
+			text-align: center;
+			color: var(--off-fg);
+			font-size: .82rem;
+			padding: 1.4rem;
+			font-style: italic;
+		}
+
+		.fab-add {
+			position: fixed;
+			right: 2rem;
+			bottom: 2rem;
+			background: var(--navy);
+			color: #fff;
+			border: none;
+			border-radius: 50px;
+			padding: .85rem 1.4rem;
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+			font-weight: 500;
+			font-size: .9rem;
+			box-shadow: 0 8px 22px rgba(24, 39, 64, .28);
+			text-decoration: none;
+			transition: transform .15s, box-shadow .15s;
+		}
+
+		.fab-add:hover {
+			transform: translateY(-2px);
+			box-shadow: 0 12px 26px rgba(24, 39, 64, .34);
+			color: #fff;
+		}
+
+		@media (max-width:768px) {
+			.topnav {
+				display: none;
+			}
+
+			.search-bar {
+				min-width: 100%;
+			}
+
+			table.pc-table {
+				font-size: .78rem;
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<div class="topbar">
+		<div class="brand">
+			<div class="brand-mark">PC</div>
+			パソコン管理
+		</div>
+		<nav class="topnav d-flex align-items-center">
+			<a th:href="@{/pc/list}" class="active"><i class="bi bi-hdd-stack me-1"></i>パソコン情報一覧</a>
+			<a th:href="@{/pc/new}"><i class="bi bi-plus-square me-1"></i>パソコン情報登録</a>
+			<a th:href="@{/logout}" class="logout"><i class="bi bi-box-arrow-right me-1"></i>ログアウト</a>
+		</nav>
+	</div>
+
+	<div class="page-wrap">
+
+		<div class="page-head">
+			<div>
+				<h1>パソコン情報一覧</h1>
+				<div class="sub">スタッフ・利用者・体験者が使用するパソコンの登録状況を管理します</div>
+			</div>
+			<form th:action="@{/pc/list}" method="get" class="search-bar">
+				<i class="bi bi-search"></i>
+				<input type="text" name="keyword" th:value="${keyword}" placeholder="氏名・メーカー・OS で絞り込み検索">
+			</form>
+		</div>
+
+		<!-- 共通フラグメント: userAttr ごとにサーバー側で振り分けた3つのリストを描画する -->
+		<!-- staffPcList / userPcList / trialPcList はコントローラーからModelに渡す想定 -->
+
+		<!-- スタッフPC一覧 -->
+		<div class="pc-section">
+			<div class="pc-section-head">
+				<span class="tag-dot tag-staff"></span>
+				<h2>スタッフPC一覧<span class="count">STAFF ・ <span th:text="${#lists.size(staffPcList)}">0</span>件</span>
+				</h2>
+			</div>
+			<div class="table-responsive">
+				<table class="pc-table">
+					<thead>
+						<tr>
+							<th style="width:12%;">No.</th>
+							<th style="width:16%;">スタッフ氏名</th>
+							<th class="text-center">Office</th>
+							<th class="text-center">Illustrator/Photoshop</th>
+
+							<th>その他ソフト</th>
+							<th>メーカー / OS</th>
+							<th>備考</th>
+							<th class="text-end" style="width:90px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="pc : ${staffPcList}">
+							<td class="no-cell" th:text="${pc.pcNumber}"></td>
+							<td class="name-cell" th:text="${pc.userName}"></td>
+							<td class="text-center">
+								<span class="sw-badge"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'sw-on' : 'sw-off'">
+									<i class="bi"
+										th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'bi-check-lg' : 'bi-dash'"></i>
+								</span>
+							</td>
+							<td class="text-center">
+								<span class="sw-badge"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'sw-on' : 'sw-off'">
+									<i class="bi"
+										th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'bi-check-lg' : 'bi-dash'"></i>
+								</span>
+							</td>
+							<td>
+								<span th:each="sw : ${pc.softwareNames}"
+									th:if="${sw != 'Office' and sw != 'Illustrator/Photoshop'}" class="other-sw-pill"
+									th:text="${sw}">その他</span>
+							</td>
+							<td><span class="env-pill" th:text="${pc.maker + ' / ' + pc.os}">DELL / Windows11</span>
+							</td>
+							<td class="note-cell"
+								th:text="${pc.remarks != null and !#strings.isEmpty(pc.remarks)} ? ${pc.remarks} : '—'">
+								—</td>
+							<td class="text-end">
+								<a th:href="@{/pc/edit/{no}(no=${pc.pcNumber})}" class="btn-edit"><i
+										class="bi bi-pencil"></i>編集</a>
+							</td>
+						</tr>
+						<tr class="empty-row" th:if="${#lists.isEmpty(staffPcList)}">
+							<td colspan="8">登録されているパソコンはありません</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- 利用者PC一覧 -->
+		<div class="pc-section">
+			<div class="pc-section-head">
+				<span class="tag-dot tag-user"></span>
+				<h2>利用者PC一覧<span class="count">USER ・ <span th:text="${#lists.size(userPcList)}">0</span>件</span></h2>
+			</div>
+			<div class="table-responsive">
+				<table class="pc-table">
+					<thead>
+						<tr>
+							<th style="width:12%;">No.</th>
+							<th style="width:16%;">利用者様氏名</th>
+							<th class="text-center">Office</th>
+							<th class="text-center">Illustrator</th>
+							<th class="text-center">Photoshop</th>
+							<th>その他ソフト</th>
+							<th>メーカー / OS</th>
+							<th>備考</th>
+							<th class="text-end" style="width:90px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="pc : ${userPcList}">
+							<td class="no-cell" th:text="${pc.pcNumber}"></td>
+							<td class="name-cell" th:text="${pc.userName}"></td>
+							<td class="text-center">
+								<span class="sw-badge"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'sw-on' : 'sw-off'">
+									<i class="bi"
+										th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'bi-check-lg' : 'bi-dash'"></i>
+								</span>
+							</td>
+							<td class="text-center">
+								<span class="sw-badge"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'sw-on' : 'sw-off'">
+									<i class="bi"
+										th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'bi-check-lg' : 'bi-dash'"></i>
+								</span>
+							</td>
+							<td>
+								<span th:each="sw : ${pc.softwareNames}"
+									th:if="${sw != 'Office' and sw != 'Illustrator/Photoshop'}" class="other-sw-pill"
+									th:text="${sw}">その他</span>
+							</td>
+							<td><span class="env-pill" th:text="${pc.maker + ' / ' + pc.os}">NEC / Windows11</span></td>
+							<td class="note-cell"
+								th:text="${pc.remarks != null and !#strings.isEmpty(pc.remarks)} ? ${pc.remarks} : '—'">
+								—</td>
+							<td class="text-end">
+								<a th:href="@{/pc/edit/{no}(no=${pc.pcNumber})}" class="btn-edit"><i
+										class="bi bi-pencil"></i>編集</a>
+							</td>
+						</tr>
+						<tr class="empty-row" th:if="${#lists.isEmpty(userPcList)}">
+							<td colspan="8">登録されているパソコンはありません</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+		<!-- 体験者PC一覧 -->
+		<div class="pc-section">
+			<div class="pc-section-head">
+				<span class="tag-dot tag-trial"></span>
+				<h2>体験者PC一覧<span class="count">TRIAL ・ <span th:text="${#lists.size(trialPcList)}">0</span>件</span></h2>
+			</div>
+			<div class="table-responsive">
+				<table class="pc-table">
+					<thead>
+						<tr>
+							<th style="width:12%;">No.</th>
+							<th style="width:16%;">体験者様氏名</th>
+							<th class="text-center">Office</th>
+							<th class="text-center">Illustrator</th>
+							<th class="text-center">Photoshop</th>
+							<th>その他ソフト</th>
+							<th>メーカー / OS</th>
+							<th>備考</th>
+							<th class="text-end" style="width:90px;"></th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="pc : ${trialPcList}">
+							<td class="no-cell" th:text="${pc.pcNumber}"></td>
+							<td class="name-cell" th:text="${pc.userName}"></td>
+							<td class="text-center">
+								<span class="sw-badge"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'sw-on' : 'sw-off'">
+									<i class="bi"
+										th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'bi-check-lg' : 'bi-dash'"></i>
+								</span>
+							</td>
+							<td class="text-center">
+								<span class="sw-badge"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'sw-on' : 'sw-off'">
+									<i class="bi"
+										th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'bi-check-lg' : 'bi-dash'"></i>
+								</span>
+							</td>
+							<td>
+								<span th:each="sw : ${pc.softwareNames}"
+									th:if="${sw != 'Office' and sw != 'Illustrator/Photoshop'}" class="other-sw-pill"
+									th:text="${sw}">その他</span>
+							</td>
+							<td><span class="env-pill" th:text="${pc.maker + ' / ' + pc.os}">Lenovo / Windows11</span>
+							</td>
+							<td class="note-cell"
+								th:text="${pc.remarks != null and !#strings.isEmpty(pc.remarks)} ? ${pc.remarks} : '—'">
+								—</td>
+							<td class="text-end">
+								<a th:href="@{/pc/edit/{no}(no=${pc.pcNumber})}" class="btn-edit"><i
+										class="bi bi-pencil"></i>編集</a>
+							</td>
+						</tr>
+						<tr class="empty-row" th:if="${#lists.isEmpty(trialPcList)}">
+							<td colspan="8">登録されているパソコンはありません</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+
+	</div>
+
+	<a th:href="@{/pcs/register}" class="fab-add"><i class="bi bi-plus-lg"></i>パソコン情報登録</a>
+
+</body>
+
+</html>
