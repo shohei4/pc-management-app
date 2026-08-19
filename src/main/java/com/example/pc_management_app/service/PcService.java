@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.pc_management_app.dto.PcListItemDto;
@@ -16,8 +19,6 @@ import com.example.pc_management_app.repository.PcRepository;
 import com.example.pc_management_app.repository.PcSoftRepository;
 import com.example.pc_management_app.repository.SoftwareRepository;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -73,12 +74,12 @@ public class PcService {
 
 	//ソフトで絞込
 	public List<PcListItemDto> findBySoftwareName(String softwareName) {
-		
+
 		List<Long> pcIds = pcSoftRepository.findPcIdsBySoftwareName(softwareName);
 		if (pcIds.isEmpty()) {
 			throw new EntityNotFoundException("ソフトウェア名が見つかりません: " + softwareName);
 		}
-		
+
 		return pcRepository.findAllById(pcIds).stream()
 				.map(pcMapper::toListItemDto)
 				.toList();
@@ -116,6 +117,43 @@ public class PcService {
 						.build())
 				.toList();
 		pcSoftRepository.saveAll(pcSoftList);
+	}
+
+	//更新処理
+	@Transactional
+	public void update(PcRequest request, Long pcId) {
+		//idで更新対象を検索
+		Pc targetPcItem = pcRepository.findById(pcId)
+				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
+
+		//入力値に更新
+		targetPcItem = Pc.builder()
+				.pcNumber(request.getPcNumber())
+				.userName(request.getUserName())
+				.userAttr(request.getUserAttr())
+				.maker(request.getMaker())
+				.os(request.getOs())
+				.remarks(request.getRemarks())
+				.build();
+		//登録
+		pcRepository.save(targetPcItem);
+
+		//2. Softwareテーブルへの登録（既存流用 or 新規作成）
+		List<Long> softwareIds = request.getSoftwareNames().stream()
+				.map(name -> softwareRepository.findByName(name)
+						.orElseGet(() -> softwareRepository.save( //findByNameにヒットしない場合登録を行う
+								Software.builder().name(name).build()))
+						.getId())
+				.toList();
+		// 3. softwareIds を使って PcSoft テーブルへの登録
+		pcSoftRepository.deleteByPcId(pcId);
+		List<PcSoft> savePcSoft = softwareIds.stream()
+				.map(softId -> PcSoft.builder().pcId(pcId).softId(softId).build())
+				.toList();
+		pcSoftRepository.saveAll(savePcSoft);
+		
+		
+		
 	}
 
 }

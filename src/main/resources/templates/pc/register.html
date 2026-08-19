@@ -136,7 +136,7 @@
 
   <div class="form-card">
 
-    <form th:action="@{/pc/new}" th:object="${pcRequest}" method="post" id="pcForm">
+    <form th:action="@{/pcs/register}" th:object="${pcRequest}" method="post" id="pcForm">
 
       <!-- パソコンNO. -->
       <div class="field-group">
@@ -201,11 +201,10 @@
 
 	  <div class="field-group">
 	    <label class="field-label">OS</label>
-	    <select class="form-select" th:field="*{os}"
-	            th:classappend="${#fields.hasErrors('os')} ? 'is-invalid'">
-	      <option value="Windows11">Windows11</option>
-	      <option value="Windows10">Windows10</option>
-	    </select>
+		<select class="form-select" th:field="*{os}"
+		        th:classappend="${#fields.hasErrors('os')} ? 'is-invalid'">
+		    <option th:each="os : ${osOptions}" th:value="${os}" th:text="${os}"></option>
+		</select>
 	    <div class="invalid-feedback-custom" th:if="${#fields.hasErrors('os')}" th:errors="*{os}"></div>
 	  </div>
 

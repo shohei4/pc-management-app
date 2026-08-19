@@ -1,7 +1,6 @@
 package com.example.pc_management_app.repository;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,7 +11,7 @@ import com.example.pc_management_app.entity.PcSoft;
 
 @Repository
 public interface PcSoftRepository extends JpaRepository<PcSoft, Long> {
-	Optional<PcSoft> findByPcId(Long pcId);
+	List<PcSoft> findByPcId(Long pcId);
 	
 	List<PcSoft> findBySoftId(Long id);
 	
@@ -21,4 +20,6 @@ public interface PcSoftRepository extends JpaRepository<PcSoft, Long> {
 			+ "JOIN Software s ON s.id = ps.softId \r\n"
 			+ "WHERE s.name = :softwareName")
 	List<Long> findPcIdsBySoftwareName(@Param("softwareName") String softwareName);
+	
+	void deleteByPcId(Long pcId);
 }
