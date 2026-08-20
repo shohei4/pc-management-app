@@ -4,8 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.validation.Valid;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,6 +18,7 @@ import com.example.pc_management_app.dto.PcListItemDto;
 import com.example.pc_management_app.dto.PcRequest;
 import com.example.pc_management_app.service.PcService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -38,10 +37,15 @@ public class PcController {
 	@GetMapping
 	public String list(Model model) {
 		Map<String, List<PcListItemDto>> grouped = pcService.findAllPcForListGroupedByUserAttr();
+		
 		//キーごとにモデルに追加
-		model.addAttribute("staffPcList", grouped.getOrDefault("staff", Collections.emptyList()));
-		model.addAttribute("userPcList", grouped.getOrDefault("user", Collections.emptyList()));
-		model.addAttribute("trialPcList", grouped.getOrDefault("trial", Collections.emptyList()));
+		List<PcListItemDto> userPcList = grouped.getOrDefault("利用者", Collections.emptyList());
+		List<PcListItemDto> staffPcList = grouped.getOrDefault("スタッフ", Collections.emptyList());
+	    List<PcListItemDto> trialPcList = grouped.getOrDefault("体験者", Collections.emptyList());
+		
+	    model.addAttribute("staffPcList", staffPcList);
+	    model.addAttribute("userPcList", userPcList);
+	    model.addAttribute("trialPcList", trialPcList);
 
 		return "pc/list";
 	}
@@ -56,13 +60,13 @@ public class PcController {
 	}
 
 	//登録処理
-	@PostMapping("/save")
+	@PostMapping("/register")
 	public String save(@Valid @ModelAttribute PcRequest request,
+			BindingResult bindingResult,
 			Model model,
-			BindingResult bidingResult,
 			RedirectAttributes redirectAttributes) {
 
-		if (bidingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			//プルダウンメニューの値受け渡し処理
 			addFormOptions(model);
 			//入力エラーがあれば登録画面に遷移
@@ -86,9 +90,9 @@ public class PcController {
 	//更新処理
 	@PostMapping("/update/{id}")
 	public String update(@Valid @ModelAttribute PcRequest request,
+			BindingResult bindingResult,
 			@PathVariable Long id,
 			Model model,
-			BindingResult bindingResult,
 			RedirectAttributes redirectAttributes) {
 
 		if (bindingResult.hasErrors()) {

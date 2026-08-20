@@ -1,0 +1,82 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+ 
+<body>
+ 
+	<!--
+		共通PCテーブルフラグメント
+		呼び出し側から渡すパラメータ:
+			pcList       : 表示するPCリスト(staffPcList / userPcList / trialPcList)
+			tagClass     : 見出しの色ドットに付けるクラス(tag-staff / tag-user / tag-trial)
+			tagLabel     : 件数表示の英字ラベル(STAFF / USER / TRIAL)
+			sectionTitle : セクション見出し(スタッフPC一覧 等)
+			nameLabel    : 氏名列の見出し(スタッフ氏名 等)
+	-->
+	<div class="pc-section" th:fragment="pcTable(pcList, tagClass, tagLabel, sectionTitle, nameLabel)">
+		<div class="pc-section-head">
+			<span class="tag-dot" th:classappend="${tagClass}"></span>
+			<h2 th:text="${sectionTitle}">PC一覧
+				<span class="count">
+					<span th:text="${tagLabel}">TAG</span> ・
+					<span th:text="${#lists.size(pcList)}">0</span>件
+				</span>
+			</h2>
+		</div>
+		<div class="table-responsive">
+			<table class="pc-table">
+				<thead>
+					<tr>
+						<th style="width:12%;">No.</th>
+						<th style="width:16%;" th:text="${nameLabel}">氏名</th>
+						<th class="text-center">Office</th>
+						<th class="text-center">Illustrator/Photoshop</th>
+						<th>その他ソフト</th>
+						<th>メーカー / OS</th>
+						<th>備考</th>
+						<th class="text-end" style="width:90px;"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="pc : ${pcList}">
+						<td class="no-cell" th:text="${pc.pcNumber}"></td>
+						<td class="name-cell" th:text="${pc.userName}"></td>
+						<td class="text-center">
+							<span class="sw-badge"
+								th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'sw-on' : 'sw-off'">
+								<i class="bi"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Office')} ? 'bi-check-lg' : 'bi-dash'"></i>
+							</span>
+						</td>
+						<td class="text-center">
+							<span class="sw-badge"
+								th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'sw-on' : 'sw-off'">
+								<i class="bi"
+									th:classappend="${#lists.contains(pc.softwareNames, 'Illustrator/Photoshop')} ? 'bi-check-lg' : 'bi-dash'"></i>
+							</span>
+						</td>
+						<td>
+							<span th:each="sw : ${pc.softwareNames}"
+								th:if="${sw != 'Office' and sw != 'Illustrator/Photoshop'}" class="other-sw-pill"
+								th:text="${sw}">その他</span>
+						</td>
+						<td><span class="env-pill" th:text="${pc.maker + ' / ' + pc.os}">メーカー / OS</span></td>
+						<td class="note-cell"
+							th:text="${pc.remarks != null and !#strings.isEmpty(pc.remarks)} ? ${pc.remarks} : '—'">
+							—</td>
+						<td class="text-end">
+							<a th:href="@{/pc/edit/{no}(no=${pc.pcNumber})}" class="btn-edit">
+								<i class="bi bi-pencil"></i>編集
+							</a>
+						</td>
+					</tr>
+					<tr class="empty-row" th:if="${#lists.isEmpty(pcList)}">
+						<td colspan="8">登録されているパソコンはありません</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+ 
+</body>
+ 
+</html>

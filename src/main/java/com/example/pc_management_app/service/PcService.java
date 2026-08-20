@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
 import org.springframework.stereotype.Service;
 
 import com.example.pc_management_app.dto.PcListItemDto;
@@ -19,6 +16,8 @@ import com.example.pc_management_app.repository.PcRepository;
 import com.example.pc_management_app.repository.PcSoftRepository;
 import com.example.pc_management_app.repository.SoftwareRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,15 +29,9 @@ public class PcService {
 	private final SoftwareRepository softwareRepository;
 	private final PcMapper pcMapper;
 
-	//一覧取得
-	public List<PcListItemDto> findAllPc() {
-		return pcRepository.findAll().stream()
-				.map(pcMapper::toListItemDto)
-				.toList();
-	}
-
-	// 既存の一覧取得メソッド（DTO変換）
+	// 一覧取得メソッド（DTO変換）
 	public List<PcListItemDto> findAllPcForList() {
+		List<Pc> pcList = pcRepository.findAll();
 		return pcRepository.findAll().stream()
 				.map(pcMapper::toListItemDto)
 				.toList();
