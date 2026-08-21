@@ -64,7 +64,7 @@
 							th:text="${pc.remarks != null and !#strings.isEmpty(pc.remarks)} ? ${pc.remarks} : '—'">
 							—</td>
 						<td class="text-end">
-							<a th:href="@{/pc/edit/{no}(no=${pc.pcNumber})}" class="btn-edit">
+							<a th:href="@{/pcs/update/{id}(id=${pc.id})}" class="btn-edit">
 								<i class="bi bi-pencil"></i>編集
 							</a>
 						</td>

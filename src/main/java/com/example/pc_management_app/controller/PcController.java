@@ -1,5 +1,6 @@
 package com.example.pc_management_app.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -53,9 +54,10 @@ public class PcController {
 	//登録フォーム表示
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {
-		model.addAttribute("pcRequest", new PcRequest());
-		//プルダウンメニューの値受け渡し処理
-		addFormOptions(model);
+		PcRequest pcRequest = new PcRequest();
+	    pcRequest.setSoftwareNames(new ArrayList<>(List.of("Office"))); // 表示専用の初期値としてここで設定
+	    model.addAttribute("pcRequest", pcRequest);
+	    addFormOptions(model);
 		return "pc/register";
 	}
 
@@ -80,8 +82,11 @@ public class PcController {
 
 	//更新フォーム表示
 	@GetMapping("/update/{id}")
-	public String showUpdateForm(Model model) {
-		model.addAttribute("pcRequest", new PcRequest());
+	public String showUpdateForm(Model model, @PathVariable Long id) {
+		PcRequest pcRequest = pcService.findById(id);
+		model.addAttribute("pcRequest", pcRequest);
+		//idを単独送信
+		model.addAttribute("pcId", id);
 		//プルダウンメニューの値受け渡し処理
 		addFormOptions(model);
 		return "pc/update";

@@ -24,10 +24,10 @@ public class PcRequest {
 	private String userName;
 	
 	@NotBlank(message = "利用者属性を選択してください")
-	private String UserAttr;
+	private String userAttr;
 	
 	@Builder.Default
-	private List<String> softwareNames = new ArrayList<>(List.of("Office"));
+	private List<String> softwareNames = new ArrayList<>();
 	
 	private String maker;
 	
