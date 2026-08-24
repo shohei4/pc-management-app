@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.example.pc_management_app.dto.UserRegisterForm;
 import com.example.pc_management_app.entity.AuthUser;
-import com.example.pc_management_app.exception.DuplicateUsernameException;
+import com.example.pc_management_app.exception.user.DuplicateUsernameException;
 import com.example.pc_management_app.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,12 @@ public class UserService {
     
     /**
      * ユーザーを登録する。
-     * @throws DuplicateUsernameException ユーザー名が既に使われている場合
      */
 	public void save(UserRegisterForm form) {
+		if (userRepository.existsByUsername(form.getUsername())) {
+	        throw new DuplicateUsernameException(form.getUsername());
+	    }
 		
-		 if (userRepository.findByUsername(form.getUsername()).isPresent()) {
-	            throw new DuplicateUsernameException("このユーザー名は既に使われています");
-	        }
 		AuthUser user = AuthUser.builder()
                 .username(form.getUsername())
                 .password(passwordEncoder.encode(form.getPassword()))
@@ -36,4 +35,5 @@ public class UserService {
 
 		userRepository.save(user);
 	}
+	
 }
