@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.example.pc_management_app.dto.PcListItemDto;
-import com.example.pc_management_app.dto.PcRequest;
+import com.example.pc_management_app.dto.pc.PcListItemDto;
+import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.entity.Pc;
 import com.example.pc_management_app.mapper.PcMapper;
 import com.example.pc_management_app.repository.PcRepository;
@@ -31,12 +31,12 @@ public class PcService {
 				.map(pcMapper::toListItemDto)
 				.toList();
 	}
-	
+
 	//更新フォーム表示用（idを含めて取得）
 	public PcRequest findById(Long pcId) {
-	    Pc pc = pcRepository.findById(pcId)
-	            .orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
-	    return pcMapper.toRequestDto(pc); // MapperにEntity→PcRequestの変換を追加
+		Pc pc = pcRepository.findById(pcId)
+				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
+		return pcMapper.toRequestDto(pc); // MapperにEntity→PcRequestの変換を追加
 	}
 
 	//PC番号で絞込
@@ -82,38 +82,44 @@ public class PcService {
 	}
 
 	//登録処理
-	 @Transactional
-	    public void register(PcRequest request) {
-	        Pc pc = Pc.builder()
-	                .pcNumber(request.getPcNumber())
-	                .userName(request.getUserName())
-	                .userAttr(request.getUserAttr())
-	                .maker(request.getMaker())
-	                .os(request.getOs())
-	                .remarks(request.getRemarks())
-	                .build();
-	        Pc savedPc = pcRepository.save(pc);
+	@Transactional
+	public void register(PcRequest request) {
+		//Pcナンバーを正しい形式にフォーマット
+		String normalized = String.format("%03d", Integer.parseInt(request.getPcNumber()));
 
-	        List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
-	        pcSoftService.createPcSoftLinks(savedPc.getId(), softwareIds);
-	    }
+		Pc pc = Pc.builder()
+				.pcNumber(normalized)
+				.userName(request.getUserName())
+				.userAttr(request.getUserAttr())
+				.maker(request.getMaker())
+				.os(request.getOs())
+				.remarks(request.getRemarks())
+				.build();
+		Pc savedPc = pcRepository.save(pc);
+
+		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
+		pcSoftService.createPcSoftLinks(savedPc.getId(), softwareIds);
+	}
 
 	//更新処理
-	 @Transactional
-	    public void update(PcRequest request, Long pcId) {
-	        Pc targetPcItem = pcRepository.findById(pcId)
-	                .orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
+	@Transactional
+	public void update(PcRequest request, Long pcId) {
+		Pc targetPcItem = pcRepository.findById(pcId)
+				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
 
-	        targetPcItem.setPcNumber(request.getPcNumber());
-	        targetPcItem.setUserName(request.getUserName());
-	        targetPcItem.setUserAttr(request.getUserAttr());
-	        targetPcItem.setMaker(request.getMaker());
-	        targetPcItem.setOs(request.getOs());
-	        targetPcItem.setRemarks(request.getRemarks());
-	        pcRepository.save(targetPcItem);
-
-	        List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
-	        pcSoftService.replacePcSoftLinks(pcId, softwareIds);
-	    }
+		//Pcナンバーを正しい形式にフォーマット
+		String normalized = String.format("%03d", Integer.parseInt(request.getPcNumber()));
+		
+		targetPcItem.setPcNumber(normalized);
+		targetPcItem.setUserName(request.getUserName());
+		targetPcItem.setUserAttr(request.getUserAttr());
+		targetPcItem.setMaker(request.getMaker());
+		targetPcItem.setOs(request.getOs());
+		targetPcItem.setRemarks(request.getRemarks());
+		pcRepository.save(targetPcItem);
+		
+		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
+		pcSoftService.replacePcSoftLinks(pcId, softwareIds);
+	}
 
 }

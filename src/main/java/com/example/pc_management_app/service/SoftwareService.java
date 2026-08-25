@@ -26,7 +26,7 @@ public class SoftwareService {
 				.toList();
 	}
 
-	//ソフトウェア名1件からsoftwareIdを解決する（既存流用 or 新規作成）
+	//ソフトウェア名1件から既存のソフトウェアか判断し新規の場合は登録しidを返し、そうでない場合はそのままidを返す
 	private Long resolveSoftwareId(String name) {
 		return softwareRepository.findByName(name)
 				.orElseGet(() -> softwareRepository.save(

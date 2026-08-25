@@ -3,6 +3,7 @@ package com.example.pc_management_app.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -21,5 +22,7 @@ public interface PcSoftRepository extends JpaRepository<PcSoft, Long> {
 			+ "WHERE s.name = :softwareName")
 	List<Long> findPcIdsBySoftwareName(@Param("softwareName") String softwareName);
 	
+	@Modifying(clearAutomatically = true)
+	@Query("DELETE FROM PcSoft p WHERE p.pcId = :pcId")
 	void deleteByPcId(Long pcId);
 }

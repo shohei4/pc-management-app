@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.example.pc_management_app.dto.UserRegisterForm;
+import com.example.pc_management_app.dto.user.UserRegisterForm;
 import com.example.pc_management_app.entity.AuthUser;
 import com.example.pc_management_app.exception.user.DuplicateUsernameException;
 import com.example.pc_management_app.repository.UserRepository;

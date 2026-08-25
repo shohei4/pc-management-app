@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.example.pc_management_app.dto.PcListItemDto;
-import com.example.pc_management_app.dto.PcRequest;
+import com.example.pc_management_app.dto.pc.PcListItemDto;
+import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.service.PcService;
 
 import jakarta.validation.Valid;
@@ -32,6 +32,12 @@ public class PcController {
 	private void addFormOptions(Model model) {
 		model.addAttribute("userAttrOptions", List.of("利用者", "スタッフ", "体験者"));
 		model.addAttribute("osOptions", List.of("Windows11", "Windows10"));
+	}
+	
+	//更新処理再表示用のメソッド
+	private void prepareUpdateForm(Model model, Long id) {
+	    addFormOptions(model);
+	    model.addAttribute("pcId", id);
 	}
 
 	//一覧表示
@@ -85,10 +91,7 @@ public class PcController {
 	public String showUpdateForm(Model model, @PathVariable Long id) {
 		PcRequest pcRequest = pcService.findById(id);
 		model.addAttribute("pcRequest", pcRequest);
-		//idを単独送信
-		model.addAttribute("pcId", id);
-		//プルダウンメニューの値受け渡し処理
-		addFormOptions(model);
+		prepareUpdateForm(model, id);
 		return "pc/update";
 	}
 
@@ -101,8 +104,8 @@ public class PcController {
 			RedirectAttributes redirectAttributes) {
 
 		if (bindingResult.hasErrors()) {
-			//プルダウンメニューの値受け渡し処理
-			addFormOptions(model);
+			//プルダウンメニューの値、pcId受け渡し処理
+			prepareUpdateForm(model, id);
 			//入力エラーがあれば更新画面に遷移
 			return "pc/update";
 		}

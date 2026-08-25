@@ -25,6 +25,7 @@ public class PcSoftService {
     //PCとソフトウェアの紐付けを置き換える（更新用：既存削除→再作成）
     public void replacePcSoftLinks(Long pcId, List<Long> softwareIds) {
         pcSoftRepository.deleteByPcId(pcId);
+        pcSoftRepository.flush();
         createPcSoftLinks(pcId, softwareIds);
     }
     

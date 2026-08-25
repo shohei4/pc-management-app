@@ -1,5 +1,6 @@
-package com.example.pc_management_app.dto;
+package com.example.pc_management_app.dto.user;
 
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -15,4 +16,11 @@ public class UserRegisterForm {
 
 	@NotBlank
 	private String confirmPassword;
+
+	// password一致バリデーション
+	@AssertTrue(message = "パスワードが一致しません")
+	public boolean isPasswordMatching() {
+		return password != null && password.equals(confirmPassword);
+	}
+
 }

@@ -1,9 +1,10 @@
-package com.example.pc_management_app.dto;
+package com.example.pc_management_app.dto.pc;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,7 +19,8 @@ import lombok.Setter;
 @Builder
 public class PcRequest {
 	
-	private Integer pcNumber;
+	@Pattern(regexp = "\\d{1,3}", message = "PC番号は3桁以内の数字で入力してください")
+	private String pcNumber;
 	@NotBlank(message = "利用者名は必須です")
 	@Size(max = 50, message="利用者名は50文字以内で入力してください")
 	private String userName;

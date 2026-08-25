@@ -4,8 +4,8 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.pc_management_app.dto.PcListItemDto;
-import com.example.pc_management_app.dto.PcRequest;
+import com.example.pc_management_app.dto.pc.PcListItemDto;
+import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.entity.Pc;
 import com.example.pc_management_app.entity.Software;
 import com.example.pc_management_app.repository.PcSoftRepository;

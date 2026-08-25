@@ -30,7 +30,7 @@ public class Pc {
 	private Long id;
 	
 	@Column(unique = true, nullable = true)
-	private Integer pcNumber;
+	private String pcNumber;
 	
 	@Column(length = 50, nullable = true)
 	private String userName;

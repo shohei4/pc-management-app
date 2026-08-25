@@ -1,4 +1,4 @@
-package com.example.pc_management_app.dto;
+package com.example.pc_management_app.dto.pc;
 
 import java.util.List;
 
@@ -17,7 +17,7 @@ import lombok.ToString;
 @Builder
 public class PcListItemDto {
 	private Long id;
-    private Integer pcNumber;
+    private String pcNumber;
     private String userName;
     private String userAttr;
     private String maker;

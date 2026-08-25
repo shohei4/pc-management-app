@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.example.pc_management_app.dto.UserRegisterForm;
+import com.example.pc_management_app.dto.user.UserRegisterForm;
+import com.example.pc_management_app.exception.user.DuplicateUsernameException;
 import com.example.pc_management_app.service.UserService;
 
 import jakarta.validation.Valid;
@@ -28,15 +29,19 @@ public class UserContorller {
 
 	@PostMapping("/register")
 	public String register(@Valid @ModelAttribute UserRegisterForm form, BindingResult result, Model model) {
-		if (!form.getPassword().equals(form.getConfirmPassword())) {
-			model.addAttribute("errorMessage", "パスワードが一致しません");
-			return "user/register";
-		}
 		if (result.hasErrors()) {
+			model.addAttribute("userRegisterForm", form);
 			return "user/register";
 		}
 
-		userService.save(form);
-		return "redirect:/login?registered";
+		try {
+			userService.save(form);
+			return "redirect:/login?registered";
+		} catch (DuplicateUsernameException e) {
+			model.addAttribute("errorMessage", e.getMessage());
+			model.addAttribute("userRegisterForm", form);
+			return "user/register";
+		}
+
 	}
 }
