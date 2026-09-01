@@ -29,19 +29,31 @@ import lombok.RequiredArgsConstructor;
 public class PcController {
 
 	private final PcService pcService;
-
+	
+	/**
+	 * フォーム初期値をフロントにmodelに詰めるメソッド
+	 * @param model
+	 */
 	private void addFormOptions(Model model) {
 		model.addAttribute("userAttrOptions", List.of("利用者", "スタッフ", "体験者"));
 		model.addAttribute("osOptions", List.of("Windows11", "Windows10"));
 	}
 	
-	//更新処理再表示用のメソッド
+	/**
+	 * フォーム初期値とpcIdをmodelに詰めるメソッド
+	 * @param model
+	 * @param id　PCのID
+	 */
 	private void prepareUpdateForm(Model model, Long id) {
 	    addFormOptions(model);
 	    model.addAttribute("pcId", id);
 	}
 
-	//一覧表示
+	/**
+	 * 一覧表示用のコントローラーメソッド
+	 * @param model(staffPcList:スタッフ属性を持つPC情報,userPcList:利用者属性を持つPC情報,trialPcList:体験者属性を持つPC情報)
+	 * @return 一覧画面URL
+	 */
 	@GetMapping
 	public String list(Model model) {
 		Map<String, List<PcListItemDto>> grouped = pcService.findAllPcForListGroupedByUserAttr();
@@ -58,9 +70,14 @@ public class PcController {
 		return "pc/list";
 	}
 
-	//登録フォーム表示
+	/**
+	 * 登録画面表示用のコントローラーメソッド
+	 * @param model(pcRequest:入力値を扱うDTO)
+	 * @return　登録フォームURL
+	 */
 	@GetMapping("/register")
 	public String showRegisterForm(Model model) {
+		//フロント表示で使用するためにインスタンス化
 		PcRequest pcRequest = new PcRequest();
 	    pcRequest.setSoftwareNames(new ArrayList<>(List.of("Office"))); // 表示専用の初期値としてここで設定
 	    model.addAttribute("pcRequest", pcRequest);
