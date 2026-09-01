@@ -14,7 +14,11 @@ import lombok.RequiredArgsConstructor;
 public class PcSoftService {
 	private final PcSoftRepository pcSoftRepository;
 
-	//PCとソフトウェアの紐付けを新規作成する（登録用）
+	/**
+	 * PCとソフトウェアの紐付けを新規作成する（登録用）
+	 * @param pcId
+	 * @param softwareIds
+	 */
     public void createPcSoftLinks(Long pcId, List<Long> softwareIds) {
         List<PcSoft> pcSoftList = softwareIds.stream()
                 .map(softId -> PcSoft.builder().pcId(pcId).softId(softId).build())
@@ -22,13 +26,22 @@ public class PcSoftService {
         pcSoftRepository.saveAll(pcSoftList);
     }
 
-    //PCとソフトウェアの紐付けを置き換える（更新用：既存削除→再作成）
+    /**
+     * PCとソフトウェアの紐付けを置き換える（更新用：既存削除→再作成）
+     * @param pcId
+     * @param softwareIds
+     */
     public void replacePcSoftLinks(Long pcId, List<Long> softwareIds) {
         pcSoftRepository.deleteByPcId(pcId);
         pcSoftRepository.flush();
         createPcSoftLinks(pcId, softwareIds);
     }
     
+    /**
+     * ソフトウェア名から紐づいているpcIdをリストとして取得
+     * @param softwareName
+     * @return　List<Long> pcIdのリスト
+     */
     public List<Long> findPcIdsBySoftwareName(String softwareName) {
 		return pcSoftRepository.findPcIdsBySoftwareName(softwareName);
 	}

@@ -5,11 +5,11 @@ import com.example.pc_management_app.exception.base.ConflictException;
 import lombok.Getter;
 
 @Getter
-public class DublicatePcNumberException extends ConflictException {
+public class DuplicatePcNumberException extends ConflictException {
 	
 	private final String pcNumber;
 	
-	protected DublicatePcNumberException(String pcNumber) {
+	protected DuplicatePcNumberException(String pcNumber) {
 		super("PCナンバーは既に登録されています：" + pcNumber);
 		this.pcNumber = pcNumber;
 		// TODO 自動生成されたコンストラクター・スタブ

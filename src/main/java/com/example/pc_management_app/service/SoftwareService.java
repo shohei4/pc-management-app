@@ -16,7 +16,12 @@ import lombok.RequiredArgsConstructor;
 public class SoftwareService {
 	private final SoftwareRepository softwareRepository;
 
-	//ソフトウェア名リストからsoftwareIdリストを解決する（既存流用 or 新規作成）
+	/**
+	 * ソフトウェア名リストからsoftwareIdリストを解決する（既存流用 or 新規作成）
+	 * 入力がnullの場合は空のリストとして扱う
+	 * @param softwareNames　解決対象のソフトウェア名リスト
+	 * @return 解決されたソフトウェアIDのリスト。
+	 */
 	public List<Long> resolveSoftwareIds(List<String> softwareNames) {
 		List<String> safeNames = Optional.ofNullable(softwareNames)
 				.orElse(Collections.emptyList());
@@ -26,11 +31,15 @@ public class SoftwareService {
 				.toList();
 	}
 
-	//ソフトウェア名1件から既存のソフトウェアか判断し新規の場合は登録しidを返し、そうでない場合はそのままidを返す
-	private Long resolveSoftwareId(String name) {
-		return softwareRepository.findByName(name)
+	/**
+	 * ソフトウェア名1件から既存のソフトウェアか判断し新規の場合は登録しidを返し、そうでない場合はそのままidを返す
+	 * @param softwareName ソフトウェア名
+	 * @return ソフトウェア名に対応するソフトウェアID
+	 */
+	private Long resolveSoftwareId(String softwareName) {
+		return softwareRepository.findByName(softwareName)
 				.orElseGet(() -> softwareRepository.save(
-						Software.builder().name(name).build()))
+						Software.builder().name(softwareName).build()))
 				.getId();
 	}
 }

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.pc_management_app.dto.pc.PcListItemDto;
 import com.example.pc_management_app.dto.pc.PcRequest;
+import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.service.PcService;
 
 import jakarta.validation.Valid;
@@ -77,13 +78,21 @@ public class PcController {
 		if (bindingResult.hasErrors()) {
 			//プルダウンメニューの値受け渡し処理
 			addFormOptions(model);
+			model.addAttribute("pcRequest", request);
 			//入力エラーがあれば登録画面に遷移
 			return "pc/register";
 		}
-
-		pcService.register(request);
-		redirectAttributes.addFlashAttribute("message", "登録が完了しました");
-		return "redirect:/pcs";//一覧画面へリダイレクト
+		
+		try {
+			pcService.register(request);
+			redirectAttributes.addFlashAttribute("message", "登録が完了しました");
+			return "redirect:/pcs";//一覧画面へリダイレクト
+		}catch(DuplicatePcNumberException e) {
+			model.addAttribute("pcRequest", request);
+			model.addAttribute("errorMessage", e);
+			return "pc/register";
+		}
+		
 	}
 
 	//更新フォーム表示

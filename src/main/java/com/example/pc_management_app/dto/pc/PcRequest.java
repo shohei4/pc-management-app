@@ -19,7 +19,7 @@ import lombok.Setter;
 @Builder
 public class PcRequest {
 	
-	@Pattern(regexp = "\\d{1,3}", message = "PC番号は3桁以内の数字で入力してください")
+	@Pattern(regexp = "^$|\\d{1,3}", message = "PC番号は3桁以内の数字で入力してください")
 	private String pcNumber;
 	@NotBlank(message = "利用者名は必須です")
 	@Size(max = 50, message="利用者名は50文字以内で入力してください")
