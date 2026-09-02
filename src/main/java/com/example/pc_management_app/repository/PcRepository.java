@@ -12,6 +12,8 @@ import com.example.pc_management_app.entity.Pc;
 
 @Repository
 public interface PcRepository extends JpaRepository<Pc, Long> {	
+	//PC一覧を昇順取得
+	List<Pc> findAllByOrderByPcNumberAsc();
 	 // PC番号で絞り込み
     Optional<Pc> findByPcNumber(Integer pcNumber);
 
