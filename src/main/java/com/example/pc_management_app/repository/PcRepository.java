@@ -15,7 +15,7 @@ public interface PcRepository extends JpaRepository<Pc, Long> {
 	//PC一覧を昇順取得
 	List<Pc> findAllByOrderByPcNumberAsc();
 	 // PC番号で絞り込み
-    Optional<Pc> findByPcNumber(Integer pcNumber);
+    Optional<Pc> findByPcNumber(String pcNumber);
 
     // 利用者属性で絞込
     List<Pc> findByUserAttr(String userAttr);

@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,7 +22,6 @@ import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.service.PcService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -48,6 +49,17 @@ public class PcController {
 	    addFormOptions(model);
 	    model.addAttribute("pcId", id);
 	}
+	
+	private void addModelByUserAttr(Model model, Map<String, List<PcListItemDto>> grouped) {
+		//キーごとにモデルに追加
+		List<PcListItemDto> userPcList = grouped.getOrDefault("利用者", Collections.emptyList());
+		List<PcListItemDto> staffPcList = grouped.getOrDefault("スタッフ", Collections.emptyList());
+	    List<PcListItemDto> trialPcList = grouped.getOrDefault("体験者", Collections.emptyList());
+		
+	    model.addAttribute("staffPcList", staffPcList);
+	    model.addAttribute("userPcList", userPcList);
+	    model.addAttribute("trialPcList", trialPcList);
+	}
 
 	/**
 	 * 一覧表示用のコントローラーメソッド
@@ -59,17 +71,22 @@ public class PcController {
 		Map<String, List<PcListItemDto>> grouped = pcService.findAllPcForListGroupedByUserAttr();
 		
 		//キーごとにモデルに追加
-		List<PcListItemDto> userPcList = grouped.getOrDefault("利用者", Collections.emptyList());
-		List<PcListItemDto> staffPcList = grouped.getOrDefault("スタッフ", Collections.emptyList());
-	    List<PcListItemDto> trialPcList = grouped.getOrDefault("体験者", Collections.emptyList());
-		
-	    model.addAttribute("staffPcList", staffPcList);
-	    model.addAttribute("userPcList", userPcList);
-	    model.addAttribute("trialPcList", trialPcList);
-
+		addModelByUserAttr(model, grouped);
 		return "pc/list";
 	}
-
+	
+	/**
+	 * PCナンバーでの検索
+	 * @param model
+	 * @param pcNumber
+	 * @return
+	 */
+	@GetMapping("/pcNumber/{pcNumber}")
+	public String findBypcNumber(Model model, @PathVariable String pcNumber) {
+		model.addAttribute(pcService.findByPcNumber(pcNumber));
+		return "pc/list";
+	}
+	
 	/**
 	 * 登録画面表示用のコントローラーメソッド
 	 * @param model(pcRequest:入力値を扱うDTO)

@@ -50,7 +50,7 @@ public class PcService {
 	}
 
 	//PC番号で絞込
-	public PcListItemDto findByPcNumber(int pcNumber) {
+	public PcListItemDto findByPcNumber(String pcNumber) {
 		Pc pc = pcRepository.findByPcNumber(pcNumber)
 				.orElseThrow(() -> new EntityNotFoundException("PC番号が見つかりません: " + pcNumber));
 
