@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.example.pc_management_app.dto.pc.PcListItemDto;
@@ -76,14 +77,15 @@ public class PcController {
 	}
 	
 	/**
-	 * PCナンバーでの検索
+	 * キーワードでの検索
 	 * @param model
-	 * @param pcNumber
+	 * @param keyword
 	 * @return
 	 */
-	@GetMapping("/pcNumber/{pcNumber}")
-	public String findBypcNumber(Model model, @PathVariable String pcNumber) {
-		model.addAttribute(pcService.findByPcNumber(pcNumber));
+	@GetMapping("/serch")
+	public String findByKeyword(Model model, @RequestParam String keyword) {
+		Map<String, List<PcListItemDto>> grouped = pcService.findByKeyword(keyword);
+		addModelByUserAttr(model, grouped);		
 		return "pc/list";
 	}
 	

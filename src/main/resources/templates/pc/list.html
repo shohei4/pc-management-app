@@ -384,9 +384,9 @@
 				<h1>パソコン情報一覧</h1>
 				<div class="sub">スタッフ・利用者・体験者が使用するパソコンの登録状況を管理します</div>
 			</div>
-			<form th:action="@{/pc/list}" method="get" class="search-bar">
+			<form th:action="@{/pcs/serch}" method="get" class="search-bar">
 				<i class="bi bi-search"></i>
-				<input type="text" name="keyword" th:value="${keyword}" placeholder="氏名・メーカー・OS で絞り込み検索">
+				<input type="text" name="keyword" th:value="${keyword}" placeholder="キーワードで絞り込み検索">
 			</form>
 		</div>
 

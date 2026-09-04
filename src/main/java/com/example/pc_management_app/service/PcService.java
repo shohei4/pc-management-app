@@ -48,6 +48,15 @@ public class PcService {
 				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
 		return pcMapper.toRequestDto(pc); // MapperにEntity→PcRequestの変換を追加
 	}
+	
+	/**
+	 * キーワード検索
+	 */
+	public Map<String, List<PcListItemDto>> findByKeyword(String keyword) {
+		return pcRepository.searchByKeyword(keyword).stream()
+				.map(pcMapper::toListItemDto)
+				.collect(Collectors.groupingBy(PcListItemDto::getUserAttr));
+	}
 
 	//PC番号で絞込
 	public PcListItemDto findByPcNumber(String pcNumber) {
@@ -101,7 +110,7 @@ public class PcService {
 		String normalized = StringUtils.hasText(request.getPcNumber())
 				? String.format("%03d", Integer.parseInt(request.getPcNumber()))
 				: null;
-		
+
 		Pc pc = Pc.builder()
 				.pcNumber(normalized)
 				.userName(request.getUserName())
@@ -112,7 +121,7 @@ public class PcService {
 				.build();
 		//登録処理
 		Pc savedPc = pcRepository.save(pc);
-		
+
 		//ソフトウェアテーブルへの登録処理
 		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
 		//中間テーブルへの登録処理
@@ -141,7 +150,7 @@ public class PcService {
 		targetPcItem.setOs(request.getOs());
 		targetPcItem.setRemarks(request.getRemarks());
 		pcRepository.save(targetPcItem);
-		
+
 		//ソフトウェアテーブルへの登録処理
 		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
 		//PC-ソフト中間テーブルへの更新処理
