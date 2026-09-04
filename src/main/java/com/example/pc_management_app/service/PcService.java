@@ -50,7 +50,9 @@ public class PcService {
 	}
 	
 	/**
-	 * キーワード検索
+	 * キーワード検索メソッド
+	 * @param keyword （検索欄から受け取る）
+	 * @return Map<String, List<PcListItemDto>> : 利用者属性をキー値にもち、表示用DTOに詰めたPC情報をバリューにもつMap
 	 */
 	public Map<String, List<PcListItemDto>> findByKeyword(String keyword) {
 		return pcRepository.searchByKeyword(keyword).stream()
