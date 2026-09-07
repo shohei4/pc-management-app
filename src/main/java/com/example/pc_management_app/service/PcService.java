@@ -4,18 +4,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.example.pc_management_app.dto.pc.PcListItemDto;
 import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.entity.Pc;
+import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.mapper.PcMapper;
 import com.example.pc_management_app.repository.PcRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -122,8 +123,12 @@ public class PcService {
 				.remarks(request.getRemarks())
 				.build();
 		//登録処理
-		Pc savedPc = pcRepository.save(pc);
-
+		Pc savedPc;
+		try {
+		    savedPc = pcRepository.saveAndFlush(pc);
+		} catch (DataIntegrityViolationException e) {  // Springが用意した既存クラスをimportしてcatch
+		    throw new DuplicatePcNumberException(normalized);  // 自作の例外に変換してthrow
+		}
 		//ソフトウェアテーブルへの登録処理
 		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
 		//中間テーブルへの登録処理

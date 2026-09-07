@@ -9,12 +9,12 @@ public class DuplicatePcNumberException extends ConflictException {
 	
 	private final String pcNumber;
 	
-	protected DuplicatePcNumberException(String pcNumber) {
+	public DuplicatePcNumberException(String pcNumber) {
 		super("PCナンバーは既に登録されています：" + pcNumber);
 		this.pcNumber = pcNumber;
 		// TODO 自動生成されたコンストラクター・スタブ
 	}
-
+	
 	@Override
 	public String getErrorCode() {
 		// TODO 自動生成されたメソッド・スタブ
