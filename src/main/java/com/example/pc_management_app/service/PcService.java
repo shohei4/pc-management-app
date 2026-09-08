@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,8 +18,6 @@ import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.mapper.PcMapper;
 import com.example.pc_management_app.repository.PcRepository;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -49,7 +50,7 @@ public class PcService {
 				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
 		return pcMapper.toRequestDto(pc); // MapperにEntity→PcRequestの変換を追加
 	}
-	
+
 	/**
 	 * キーワード検索メソッド
 	 * @param keyword （検索欄から受け取る）
@@ -125,9 +126,9 @@ public class PcService {
 		//登録処理
 		Pc savedPc;
 		try {
-		    savedPc = pcRepository.saveAndFlush(pc);
-		} catch (DataIntegrityViolationException e) {  // Springが用意した既存クラスをimportしてcatch
-		    throw new DuplicatePcNumberException(normalized);  // 自作の例外に変換してthrow
+			savedPc = pcRepository.saveAndFlush(pc);
+		} catch (DataIntegrityViolationException e) { // Springが用意した既存クラスをimportしてcatch
+			throw new DuplicatePcNumberException(normalized); // 自作の例外に変換してthrow
 		}
 		//ソフトウェアテーブルへの登録処理
 		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());
@@ -156,7 +157,12 @@ public class PcService {
 		targetPcItem.setMaker(request.getMaker());
 		targetPcItem.setOs(request.getOs());
 		targetPcItem.setRemarks(request.getRemarks());
-		pcRepository.save(targetPcItem);
+
+		try {
+			pcRepository.saveAndFlush(targetPcItem);
+		} catch (DataIntegrityViolationException e) {
+			throw new DuplicatePcNumberException(normalized);
+		}
 
 		//ソフトウェアテーブルへの登録処理
 		List<Long> softwareIds = softwareService.resolveSoftwareIds(request.getSoftwareNames());

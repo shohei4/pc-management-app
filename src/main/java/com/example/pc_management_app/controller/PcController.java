@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import jakarta.validation.Valid;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -21,7 +23,6 @@ import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.service.PcService;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -49,7 +50,12 @@ public class PcController {
 		addFormOptions(model);
 		model.addAttribute("pcId", id);
 	}
-
+	
+	/**
+	 * ユーザー属性ごとにModelへ追加するメソッド
+	 * @param model
+	 * @param grouped
+	 */
 	private void addModelByUserAttr(Model model, Map<String, List<PcListItemDto>> grouped) {
 		//キーごとにモデルに追加
 		List<PcListItemDto> userPcList = grouped.getOrDefault("利用者", Collections.emptyList());
@@ -162,7 +168,7 @@ public class PcController {
 			return "redirect:/pcs";//一覧画面へリダイレクト
 		} catch (DuplicatePcNumberException e) {
 			model.addAttribute("pcRequest", request);
-			model.addAttribute("errorMessage", e);
+			model.addAttribute("errorMessage", e.getMessage());
 			return "pc/update";
 		}
 
