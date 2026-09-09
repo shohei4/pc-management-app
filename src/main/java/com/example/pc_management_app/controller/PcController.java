@@ -130,6 +130,7 @@ public class PcController {
 			redirectAttributes.addFlashAttribute("message", "登録が完了しました");
 			return "redirect:/pcs";//一覧画面へリダイレクト
 		} catch (DuplicatePcNumberException e) {
+			addFormOptions(model);
 			model.addAttribute("pcRequest", request);
 			model.addAttribute("errorMessage", e.getMessage());
 			return "pc/register";
@@ -167,6 +168,7 @@ public class PcController {
 			redirectAttributes.addFlashAttribute("message", "更新が完了しました");
 			return "redirect:/pcs";//一覧画面へリダイレクト
 		} catch (DuplicatePcNumberException e) {
+			preupdateForm(model.id);
 			model.addAttribute("pcRequest", request);
 			model.addAttribute("errorMessage", e.getMessage());
 			return "pc/update";
