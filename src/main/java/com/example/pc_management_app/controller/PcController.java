@@ -154,7 +154,15 @@ public class PcController {
 			@PathVariable Long id,
 			Model model,
 			RedirectAttributes redirectAttributes) {
-
+		
+		
+		//削除フラグがONの場合は削除処理
+	    if (request.isDeleted()) {
+	        pcService.delete(id);
+	        redirectAttributes.addFlashAttribute("message", "削除が完了しました");
+	        return "redirect:/pcs";
+	    }
+	    
 		if (bindingResult.hasErrors()) {
 			//プルダウンメニューの値、pcId受け渡し処理
 			prepareUpdateForm(model, id);
@@ -168,7 +176,7 @@ public class PcController {
 			redirectAttributes.addFlashAttribute("message", "更新が完了しました");
 			return "redirect:/pcs";//一覧画面へリダイレクト
 		} catch (DuplicatePcNumberException e) {
-			preupdateForm(model.id);
+			prepareUpdateForm(model,id);
 			model.addAttribute("pcRequest", request);
 			model.addAttribute("errorMessage", e.getMessage());
 			return "pc/update";

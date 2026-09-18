@@ -39,6 +39,8 @@ public class PcRequest {
 
 	private String remarks;
 	
+	private boolean deleted;
+	
 	public void setPcNumber(String pcNumber) {
 		this.pcNumber = normalizeToHalfWidth(pcNumber);
 	}
@@ -59,6 +61,5 @@ public class PcRequest {
 	    }
 	    return sb.toString();
 	}
-	
 	
 }

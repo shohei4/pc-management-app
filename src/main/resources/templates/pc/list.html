@@ -11,6 +11,7 @@
 	<link
 		href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=JetBrains+Mono:wght@500&display=swap"
 		rel="stylesheet">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 	<style>
 		:root {
 			--ink: #1c2430;
@@ -389,9 +390,14 @@
 				<input type="text" name="keyword" th:value="${keyword}" placeholder="キーワードで絞り込み検索">
 			</form>
 		</div>
-
+		<div th:if="${message}" class="alert alert-success alert-dismissible fade show" role="alert">
+			<i class="bi bi-check-circle"></i>
+			<span th:text="${message}"></span>
+			<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+		</div>
 		<!-- スタッフPC一覧 -->
-		<div th:replace="~{pc/fragments/pcTable :: pcTable(${staffPcList}, 'tag-staff', 'STAFF', 'スタッフPC一覧', 'スタッフ氏名')}">
+		<div
+			th:replace="~{pc/fragments/pcTable :: pcTable(${staffPcList}, 'tag-staff', 'STAFF', 'スタッフPC一覧', 'スタッフ氏名')}">
 		</div>
 
 		<!-- 利用者PC一覧 -->

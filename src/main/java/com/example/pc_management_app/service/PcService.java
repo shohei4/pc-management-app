@@ -169,5 +169,15 @@ public class PcService {
 		//PC-ソフト中間テーブルへの更新処理
 		pcSoftService.replacePcSoftLinks(pcId, softwareIds);
 	}
+	
+	/**
+	 * PC情報削除処理
+	 * @param pcId
+	 */
+	public void delete(Long id) {
+		Pc pc = pcRepository.findById(id)
+	            .orElseThrow(() -> new EntityNotFoundException("指定されたPCが見つかりません"));
+		pcRepository.deleteById(id);
+	}
 
 }
