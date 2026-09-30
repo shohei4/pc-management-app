@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.validation.Valid;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +21,7 @@ import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.service.PcService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @Controller
@@ -37,7 +36,7 @@ public class PcController {
 	 * @param model
 	 */
 	private void addFormOptions(Model model) {
-		model.addAttribute("userAttrOptions", List.of("利用者", "スタッフ", "体験者"));
+		model.addAttribute("userAttrOptions", List.of("スタッフ", "利用者", "体験者"));
 		model.addAttribute("osOptions", List.of("Windows11", "Windows10"));
 	}
 
@@ -50,7 +49,7 @@ public class PcController {
 		addFormOptions(model);
 		model.addAttribute("pcId", id);
 	}
-	
+
 	/**
 	 * ユーザー属性ごとにModelへ追加するメソッド
 	 * @param model
@@ -58,8 +57,8 @@ public class PcController {
 	 */
 	private void addModelByUserAttr(Model model, Map<String, List<PcListItemDto>> grouped) {
 		//キーごとにモデルに追加
-		List<PcListItemDto> userPcList = grouped.getOrDefault("利用者", Collections.emptyList());
 		List<PcListItemDto> staffPcList = grouped.getOrDefault("スタッフ", Collections.emptyList());
+		List<PcListItemDto> userPcList = grouped.getOrDefault("利用者", Collections.emptyList());
 		List<PcListItemDto> trialPcList = grouped.getOrDefault("体験者", Collections.emptyList());
 
 		model.addAttribute("staffPcList", staffPcList);
@@ -87,7 +86,7 @@ public class PcController {
 	 * @param keyword
 	 * @return
 	 */
-	@GetMapping("/serch")
+	@GetMapping("/search")
 	public String findByKeyword(Model model, @RequestParam String keyword) {
 		Map<String, List<PcListItemDto>> grouped = pcService.findByKeyword(keyword);
 		addModelByUserAttr(model, grouped);
@@ -123,7 +122,7 @@ public class PcController {
 			//入力エラーがあれば登録画面に遷移
 			return "pc/register";
 		}
-		
+
 		//PCナンバー一意制約例外処理
 		try {
 			pcService.register(request);
@@ -154,29 +153,28 @@ public class PcController {
 			@PathVariable Long id,
 			Model model,
 			RedirectAttributes redirectAttributes) {
-		
-		
+
 		//削除フラグがONの場合は削除処理
-	    if (request.isDeleted()) {
-	        pcService.delete(id);
-	        redirectAttributes.addFlashAttribute("message", "削除が完了しました");
-	        return "redirect:/pcs";
-	    }
-	    
+		if (request.isDeleted()) {
+			pcService.delete(id);
+			redirectAttributes.addFlashAttribute("message", "削除が完了しました");
+			return "redirect:/pcs";
+		}
+
 		if (bindingResult.hasErrors()) {
 			//プルダウンメニューの値、pcId受け渡し処理
 			prepareUpdateForm(model, id);
 			//入力エラーがあれば更新画面に遷移
 			return "pc/update";
 		}
-		
+
 		//PCナンバー一意制約例外処理
 		try {
 			pcService.update(request, id);
 			redirectAttributes.addFlashAttribute("message", "更新が完了しました");
 			return "redirect:/pcs";//一覧画面へリダイレクト
 		} catch (DuplicatePcNumberException e) {
-			prepareUpdateForm(model,id);
+			prepareUpdateForm(model, id);
 			model.addAttribute("pcRequest", request);
 			model.addAttribute("errorMessage", e.getMessage());
 			return "pc/update";

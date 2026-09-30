@@ -1,8 +1,8 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
- 
+
 <body>
- 
+
 	<!--
 		共通PCテーブルフラグメント
 		呼び出し側から渡すパラメータ:
@@ -15,7 +15,8 @@
 	<div class="pc-section" th:fragment="pcTable(pcList, tagClass, tagLabel, sectionTitle, nameLabel)">
 		<div class="pc-section-head">
 			<span class="tag-dot" th:classappend="${tagClass}"></span>
-			<h2 th:text="${sectionTitle}">PC一覧
+			<h2>
+				<th:block th:text="${sectionTitle}">PC一覧</th:block>
 				<span class="count">
 					<span th:text="${tagLabel}">TAG</span> ・
 					<span th:text="${#lists.size(pcList)}">0</span>件
@@ -76,7 +77,7 @@
 			</table>
 		</div>
 	</div>
- 
+
 </body>
- 
+
 </html>

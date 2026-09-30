@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,6 +15,8 @@ import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.mapper.PcMapper;
 import com.example.pc_management_app.repository.PcRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -169,14 +168,15 @@ public class PcService {
 		//PC-ソフト中間テーブルへの更新処理
 		pcSoftService.replacePcSoftLinks(pcId, softwareIds);
 	}
-	
+
 	/**
 	 * PC情報削除処理
 	 * @param pcId
 	 */
 	public void delete(Long id) {
-		Pc pc = pcRepository.findById(id)
-	            .orElseThrow(() -> new EntityNotFoundException("指定されたPCが見つかりません"));
+		if (!pcRepository.existsById(id)) {
+			throw new EntityNotFoundException("指定されたPCが見つかりません");
+		}
 		pcRepository.deleteById(id);
 	}
 
