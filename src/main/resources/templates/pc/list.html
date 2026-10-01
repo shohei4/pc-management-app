@@ -397,15 +397,15 @@
 		</div>
 		<!-- スタッフPC一覧 -->
 		<div
-			th:replace="~{pc/fragments/pcTable :: pcTable(${staffPcList}, 'tag-staff', 'STAFF', 'スタッフPC一覧', 'スタッフ氏名')}">
+			th:replace="~{pc/fragments/pcTable :: pcTable(${staffPcList}, 'tag-staff', 'スタッフ', 'スタッフPC一覧', 'スタッフ氏名')}">
 		</div>
 
 		<!-- 利用者PC一覧 -->
-		<div th:replace="~{pc/fragments/pcTable :: pcTable(${userPcList}, 'tag-user', 'USER', '利用者PC一覧', '利用者様氏名')}">
+		<div th:replace="~{pc/fragments/pcTable :: pcTable(${userPcList}, 'tag-user', '利用者', '利用者PC一覧', '利用者様氏名')}">
 		</div>
 
 		<!-- 体験者PC一覧 -->
-		<div th:replace="~{pc/fragments/pcTable :: pcTable(${trialPcList}, 'tag-trial', 'TRIAL', '体験者PC一覧', '体験者様氏名')}">
+		<div th:replace="~{pc/fragments/pcTable :: pcTable(${trialPcList}, 'tag-trial', '体験者', '体験者PC一覧', '体験者様氏名')}">
 		</div>
 
 	</div>
