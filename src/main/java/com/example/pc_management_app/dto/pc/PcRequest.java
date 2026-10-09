@@ -31,12 +31,14 @@ public class PcRequest {
 
 	@Builder.Default
 	private List<String> softwareNames = new ArrayList<>();
-
+	
+	@NotBlank(message = "メーカー名は必須です")
 	private String maker;
 
 	@Builder.Default
 	private String os = "Windows11";
-
+	
+	@Size(message = "備考は1000文字以内で入力して下さい")
 	private String remarks;
 	
 	private boolean deleted;
