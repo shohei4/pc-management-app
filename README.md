@@ -39,3 +39,9 @@ RuntimeException
 * 絞り込み検索機能の充実
   * 利用者属性での絞り込み
   * PC番号での検索
+
+## 学習した内容
+* char型 - 一文字を値に持つプリミティブ型
+* Characterクラス - char型のラッパークラス>
+ * `Character.digit(char c, int radix)` - 文字を指定した基数の数値に変換する。変換できなければ `-1` を返す
+ * `Character.forDigit(int digit, int radix)` - 数値を指定した基数の**半角文字**に変換する
