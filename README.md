@@ -18,11 +18,11 @@
 **技術・設計**
 * 中間テーブルを使用してPC情報とソフトウェアの情報を管理し、拡張性を高めた
 * 業務例外を型で分類する階層構造を採用した
-  RuntimeException  
- └─ ApplicationException   … ステータスとエラーコードを持つ基底クラス  
-     └─ ConflictException  … データ競合(409)の分類  
-         ├─ DuplicateUsernameException  
-         └─ DuplicatePcNumberException  
+RuntimeException  
+ └─ ApplicationException   … ステータスとエラーコードを持つ基底クラス
+    └─ ConflictException  … データ競合(409)の分類  
+       ├─ DuplicateUsernameException
+       └─ DuplicatePcNumberException  
   * 例外の型で原因を特定でき、`ConflictException` でまとめて捕捉できる
   * フォーム画面では入力値とエラーを再表示する必要があるため、
   コントローラーで `try-catch` + `rejectValue` により処理している
