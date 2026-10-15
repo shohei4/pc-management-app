@@ -45,4 +45,8 @@ public class PcSoftService {
     public List<Long> findPcIdsBySoftwareName(String softwareName) {
 		return pcSoftRepository.findPcIdsBySoftwareName(softwareName);
 	}
+    
+    public void delete(Long pcId) {
+    	pcSoftRepository.deleteByPcId(pcId);
+    }
 }

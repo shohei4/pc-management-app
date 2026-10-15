@@ -4,6 +4,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -15,12 +18,11 @@ import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.mapper.PcMapper;
 import com.example.pc_management_app.repository.PcRepository;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class PcService {
 
 	private final PcRepository pcRepository;
@@ -107,7 +109,6 @@ public class PcService {
 	 * 登録処理
 	 * @param request 入力値を受け取るDTO
 	 */
-	@Transactional
 	public void register(PcRequest request) {
 		//Pcナンバーを正しい形式にフォーマット
 		String normalized = StringUtils.hasText(request.getPcNumber())
@@ -140,7 +141,6 @@ public class PcService {
 	 * @param request
 	 * @param pcId
 	 */
-	@Transactional
 	public void update(PcRequest request, Long pcId) {
 		Pc targetPcItem = pcRepository.findById(pcId)
 				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
@@ -177,6 +177,7 @@ public class PcService {
 		if (!pcRepository.existsById(id)) {
 			throw new EntityNotFoundException("指定されたPCが見つかりません");
 		}
+		pcSoftService.delete(id);
 		pcRepository.deleteById(id);
 	}
 
