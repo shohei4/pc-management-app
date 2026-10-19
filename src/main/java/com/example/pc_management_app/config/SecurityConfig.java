@@ -35,8 +35,9 @@ public class SecurityConfig {
                 .permitAll()
             )
             .logout(logout -> logout
-                .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout")
+                .logoutUrl("/logout")					//ログアウト処理のURL
+                .logoutSuccessUrl("/login?logout")		//ログアウト後の遷移先
+                .invalidateHttpSession(true) 			//セッション破棄
                 .permitAll()
             );
 
