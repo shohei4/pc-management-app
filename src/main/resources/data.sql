@@ -8,3 +8,4 @@ ALTER TABLE pc_software
 ALTER TABLE pc_software
   ADD CONSTRAINT fk_pc_software_software
   FOREIGN KEY (software_id) REFERENCES software(id);
+  
