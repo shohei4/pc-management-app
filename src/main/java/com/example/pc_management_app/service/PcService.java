@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.dao.DataIntegrityViolationException;
@@ -14,6 +13,7 @@ import org.springframework.util.StringUtils;
 import com.example.pc_management_app.dto.pc.PcListItemDto;
 import com.example.pc_management_app.dto.pc.PcRequest;
 import com.example.pc_management_app.entity.Pc;
+import com.example.pc_management_app.exception.base.ResourceNotFoundException;
 import com.example.pc_management_app.exception.pc.DuplicatePcNumberException;
 import com.example.pc_management_app.mapper.PcMapper;
 import com.example.pc_management_app.repository.PcRepository;
@@ -48,7 +48,7 @@ public class PcService {
 	 */
 	public PcRequest findById(Long pcId) {
 		Pc pc = pcRepository.findById(pcId)
-				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
+				.orElseThrow(() -> new ResourceNotFoundException("対象のPC情報が見つかりませんid：" + pcId));
 		return pcMapper.toRequestDto(pc); // MapperにEntity→PcRequestの変換を追加
 	}
 
@@ -66,7 +66,7 @@ public class PcService {
 	//PC番号で絞込
 	public PcListItemDto findByPcNumber(String pcNumber) {
 		Pc pc = pcRepository.findByPcNumber(pcNumber)
-				.orElseThrow(() -> new EntityNotFoundException("PC番号が見つかりません: " + pcNumber));
+				.orElseThrow(() -> new ResourceNotFoundException("当該PC番号のリソースが見つかりません: " + pcNumber));
 
 		return pcMapper.toListItemDto(pc);
 	}
@@ -96,7 +96,7 @@ public class PcService {
 
 		List<Long> pcIds = pcSoftService.findPcIdsBySoftwareName(softwareName);
 		if (pcIds.isEmpty()) {
-			throw new EntityNotFoundException("ソフトウェア名が見つかりません: " + softwareName);
+			throw new ResourceNotFoundException("ソフトウェア名が見つかりません: " + softwareName);
 		}
 
 		return pcRepository.findAllById(pcIds).stream()
@@ -143,7 +143,7 @@ public class PcService {
 	 */
 	public void update(PcRequest request, Long pcId) {
 		Pc targetPcItem = pcRepository.findById(pcId)
-				.orElseThrow(() -> new EntityNotFoundException("当該PC情報が見つかりません: " + pcId));
+				.orElseThrow(() -> new ResourceNotFoundException("当該PC情報が見つかりません: " + pcId));
 
 		//Pcナンバーを正しい形式にフォーマット
 		String normalized = StringUtils.hasText(request.getPcNumber())
@@ -173,12 +173,12 @@ public class PcService {
 	 * PC情報削除処理
 	 * @param pcId
 	 */
-	public void delete(Long id) {
-		if (!pcRepository.existsById(id)) {
-			throw new EntityNotFoundException("指定されたPCが見つかりません");
+	public void delete(Long pcId) {
+		if (!pcRepository.existsById(pcId)) {
+			throw new ResourceNotFoundException("指定されたPCが見つかりません id：" + pcId);
 		}
-		pcSoftService.delete(id);
-		pcRepository.deleteById(id);
+		pcSoftService.delete(pcId);
+		pcRepository.deleteById(pcId);
 	}
 
 }

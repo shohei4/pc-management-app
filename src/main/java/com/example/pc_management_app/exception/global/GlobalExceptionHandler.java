@@ -4,8 +4,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.example.pc_management_app.exception.pc.PcNotFoundException;
-import com.example.pc_management_app.exception.user.UserNotFoundException;
+import com.example.pc_management_app.exception.base.ResourceNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -14,25 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 public class GlobalExceptionHandler {
 	
 	/**
-	 * ユーザー情報が見つからない時のハンドラメソッド
+	 * リソースが見つからない時のハンドラメソッド
 	 * @param e
 	 * @param model
 	 * @return エラーページ404
 	 */
-	@ExceptionHandler(UserNotFoundException.class)
-	public String handleUserNotFound(UserNotFoundException e, Model model) {
-		model.addAttribute("message", e.getMessage());
-		return "error/404";
-	}
-	
-	/**
-	 * PC情報が見つからない時のハンドラメソッド
-	 * @param e
-	 * @param model
-	 * @return エラーページ404
-	 */
-	@ExceptionHandler(PcNotFoundException.class)
-	public String handlePcNotFound(PcNotFoundException e, Model model) {
+	@ExceptionHandler(ResourceNotFoundException.class)
+	public String handlePcNotFound(ResourceNotFoundException e, Model model) {
 		model.addAttribute("message", e.getMessage());
 		return "error/404";
 	}
