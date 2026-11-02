@@ -3,6 +3,7 @@ package com.example.pc_management_app.exception.global;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import com.example.pc_management_app.exception.base.ResourceNotFoundException;
 
@@ -18,7 +19,10 @@ public class GlobalExceptionHandler {
 	 * @param model
 	 * @return エラーページ404
 	 */
-	@ExceptionHandler(ResourceNotFoundException.class)
+	@ExceptionHandler({
+	    ResourceNotFoundException.class,
+	    NoResourceFoundException.class
+	})
 	public String handlePcNotFound(ResourceNotFoundException e, Model model) {
 		model.addAttribute("message", e.getMessage());
 		return "error/404";
