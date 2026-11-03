@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<nav th:fragment="topnav(active)"
+		class="topnav d-flex align-items-center">
+		<a th:href="@{/pcs}" th:classappend="${active == 'list'} ? 'active'">
+			<i class="bi bi-hdd-stack me-1"></i>パソコン情報一覧
+		</a> <a th:href="@{/pcs/register}"
+			th:classappend="${active == 'register'} ? 'active'"> <i
+			class="bi bi-plus-square me-1"></i>パソコン情報登録
+		</a>
+		<form th:action="@{/logout}" method="post" class="d-inline">
+			<button type="submit"
+				class="logout btn btn-link p-0 border-0 text-decoration-none">
+				<i class="bi bi-box-arrow-right me-1"></i>ログアウト
+			</button>
+		</form>
+	</nav>
+
+</body>
+</html>
